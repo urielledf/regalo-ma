@@ -1,0 +1,194 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feliz Día, Mami ❤️</title>
+  <style>
+    :root{
+      --accent: #df02bae8;
+      --accent-dark: #d603d6;
+      --glass: rgba(255,255,255,0.12);
+      --card: rgba(255,255,255,0.9);
+      --text: #3b2a2a;
+    }
+    html,body{height:100%;margin:0;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+    /* Fondo cariñoso: gradiente con corazones sutiles (SVG) */
+    body{
+      background: linear-gradient(135deg,#ffe6f0 0%, #fff0f6 50%, #fff7fb 100%);
+      display:flex;align-items:center;justify-content:center;overflow:hidden;
+    }
+    .hearts{
+      position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 20% 10%, rgba(255,107,154,0.06) 0 2px, transparent 2px), radial-gradient(circle at 80% 70%, rgba(255,59,112,0.05) 0 2px, transparent 2px);
+      mix-blend-mode: overlay;
+    }
+
+    .card{
+      width:min(980px, 96%);
+      height:min(640px, 90%);
+      border-radius:18px;box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+      overflow:hidden;display:grid;grid-template-columns:1fr 360px;background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75));backdrop-filter: blur(6px);
+    }
+
+    /* SLIDES */
+    .slides{
+      position:relative;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;
+    }
+    .slides img{width:100%;height:100%;object-fit:cover;position:absolute;left:0;top:0;opacity:0;transition:opacity 1s ease-in-out;}
+    .slides img.show{opacity:1;}
+
+    /* Panel derecho con mensaje y controles */
+    .panel{padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));}
+    .message{background:var(--glass);border-radius:14px;padding:18px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,0.06);}
+    .message h1{margin:0;font-size:28px;color:var(--accent-dark);}
+    .message p{margin:8px 0 0 0;color:#5a3b3b;font-size:15px;}
+
+    .controls{display:flex;gap:10px;margin-top:18px;align-items:center;}
+    button{cursor:pointer;border:0;padding:10px 14px;border-radius:10px;font-weight:600;background:var(--accent);color:white;box-shadow:0 6px 18px rgba(255,107,154,0.25);} 
+    button.secondary{background:transparent;color:var(--accent-dark);border:2px solid rgba(255,59,112,0.12);}
+
+    .thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px;}
+    .thumbs img{width:72px;height:48px;object-fit:cover;border-radius:8px;opacity:0.8;border:2px solid transparent;cursor:pointer}
+    .thumbs img.active{border-color:var(--accent-dark);opacity:1}
+
+    .footer{font-size:12px;color:#6b4f4f;}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .card{grid-template-columns:1fr; height:86vh}
+      .panel{order:2;padding:16px}
+      .slides{height:56vh}
+    }
+
+    /* flechas */
+    .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;display:flex;gap:12px}
+    .nav .left{left:8px}
+    .nav .right{right:8px}
+    .nav button{background:rgba(255,255,255,0.6);color:var(--accent-dark);box-shadow:none;padding:8px;border-radius:10px}
+
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true"></div>
+  <div class="card" role="main">
+    <div class="slides" id="slides">
+      <!-- Imágenes: se asume que el usuario las colocó en /images/slide1.jpg, slide2.jpg, ... -->
+      <img src="image/slide1.jpg" alt="Foto 1" class="show">
+      <img src="image/slide2.jpg" alt="Foto 2">
+      <img src="image/slide3.jpg" alt="Foto 3">
+      <img src="image/slide4.jpg" alt="Foto 3">
+      <img src="image/slide.jpg" alt="Foto 3">
+
+      <div class="nav left"><button id="prev">◀</button></div>
+      <div class="nav right"><button id="next">▶</button></div>
+    </div>
+
+    <div class="panel">
+      <div>
+        <div class="message">
+          <h1>Feliz Día de la Madre</h1>
+          <p>Para la mejor mamá del mundo, te amo con todo mi ser y te agradezco por todo lo que haces por nosotros. — <strong>[Nano]</strong></p>
+        </div>
+
+        <div class="controls">
+          <button id="playBtn">Reproducir música ▶</button>
+          <button id="pauseBtn" class="secondary" style="display:none">Pausar ▮▮</button>
+          <button id="toggleSlideshow" class="secondary">Pausar fotos</button>
+        </div>
+
+        <div class="thumbs" id="thumbs">
+          <img data-index="0" src="image/slide1.jpg" alt="Miniatura 1" class="active">
+          <img data-index="1" src="image/slide2.jpg" alt="Miniatura 2">
+          <img data-index="2" src="image/slide3.jpg" alt="Miniatura 3">
+          <img data-index="3" src="image/slide4.jpg" alt="Miniatura 2">
+          <img data-index="5" src="image/slide.jpg" alt="Miniatura 2">
+        </div>
+      </div>
+
+      <div style="text-align:center">
+        <div class="footer">Si la musica no inicia, haz clic en "Reproducir música". Podes pausar las fotos y volver a que se muevan.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- audio -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="audio/song1.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio en HTML5.
+  </audio>
+
+  <script>
+    const slides = document.querySelectorAll('#slides img');
+    const thumbs = document.querySelectorAll('#thumbs img');
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const toggleSlideshow = document.getElementById('toggleSlideshow');
+    const audio = document.getElementById('bgMusic');
+
+    let idx = 0;
+    let interval = null;
+    const delay = 4000; // 4 segundos por foto
+    let playing = true;
+
+    function show(index){
+      slides.forEach((s,i)=> s.classList.toggle('show', i===index));
+      thumbs.forEach((t,i)=> t.classList.toggle('active', i===index));
+      idx = index;
+    }
+
+    function nextSlide(){
+      show((idx+1) % slides.length);
+    }
+    function prevSlide(){
+      show((idx-1+slides.length) % slides.length);
+    }
+
+    function startSlideshow(){
+      if(interval) clearInterval(interval);
+      interval = setInterval(nextSlide, delay);
+      toggleSlideshow.textContent = 'Pausar fotos';
+      playing = true;
+    }
+    function stopSlideshow(){
+      if(interval) clearInterval(interval);
+      interval = null;
+      toggleSlideshow.textContent = 'Reanudar fotos';
+      playing = false;
+    }
+
+    // Miniaturas clickeables
+    thumbs.forEach(t=> t.addEventListener('click', ()=>{ show(Number(t.dataset.index)); stopSlideshow(); }));
+
+    next.addEventListener('click', () => { nextSlide(); stopSlideshow(); });
+    prev.addEventListener('click', () => { prevSlide(); stopSlideshow(); });
+
+    toggleSlideshow.addEventListener('click', ()=>{ if(playing) stopSlideshow(); else startSlideshow(); });
+
+    // Audio controls: muchos navegadores bloquean autoplay, por eso pedimos interacción
+    playBtn.addEventListener('click', async ()=>{
+      try{
+        await audio.play();
+        playBtn.style.display = 'none';
+        pauseBtn.style.display = 'inline-block';
+      }catch(e){
+        alert('El navegador impidió reproducir la música automáticamente. Intenta darle permiso o hacer clic de nuevo.');
+      }
+    });
+    pauseBtn.addEventListener('click', ()=>{ audio.pause(); pauseBtn.style.display='none'; playBtn.style.display='inline-block'; });
+
+    // Iniciar slideshow automáticamente (sin audio) para que las fotos empiecen visibles
+    startSlideshow();
+
+    // soporte teclado
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='ArrowRight') nextSlide();
+      if(e.key==='ArrowLeft') prevSlide();
+      if(e.key===' ') { e.preventDefault(); if(audio.paused) audio.play(); else audio.pause(); }
+    });
+
+  </script>
+</body>
+</html>
